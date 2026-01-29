@@ -1,5 +1,5 @@
 --------------------------------------------------
--- UpUi Loader | Auto Update Hub (FIXED)
+-- UpUi Loader | Auto Update Hub (FINAL FIX)
 --------------------------------------------------
 
 local CURRENT_VERSION = "1.0.0"
@@ -72,7 +72,7 @@ if checkUpdate() then
 end
 
 --------------------------------------------------
--- LOAD UI LIBRARY (FIXED)
+-- LOAD UI LIBRARY
 --------------------------------------------------
 local UI_LIB =
     "https://raw.githubusercontent.com/hviet2510/UpUi/main/Library/Module.lua"
