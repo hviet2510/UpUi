@@ -1,4 +1,6 @@
 {
   "version": "1.0.0",
-  "loader": "https://raw.githubusercontent.com/hviet2510/UpUi/main/Loader.lua"
+  "loader": "https://raw.githubusercontent.com/hviet2510/UpUi/main/Loader.lua",
+  "changelog": "Initial release",
+  "force": false
 }
