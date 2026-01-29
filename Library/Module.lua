@@ -1,4 +1,4 @@
---// UpUi Simple UI Library
+--// UpUi Simple UI Library (FINAL FIX)
 
 local TweenService = game:GetService("TweenService")
 local UIS = game:GetService("UserInputService")
@@ -7,16 +7,12 @@ local Library = {}
 Library.__index = Library
 
 --------------------------------------------------
--- UTILS
---------------------------------------------------
 local function corner(obj, r)
     local c = Instance.new("UICorner")
     c.CornerRadius = UDim.new(0, r)
     c.Parent = obj
 end
 
---------------------------------------------------
--- NOTIFY
 --------------------------------------------------
 function Library:Notify(title, text)
     local gui = self.Gui
@@ -62,8 +58,6 @@ function Library:Notify(title, text)
 end
 
 --------------------------------------------------
--- CREATE WINDOW
---------------------------------------------------
 function Library:CreateWindow(cfg)
     local win = setmetatable({}, self)
 
@@ -94,8 +88,6 @@ function Library:CreateWindow(cfg)
     title.TextColor3 = Color3.new(1, 1, 1)
 
     --------------------------------------------------
-    -- TOGGLE WINDOW
-    --------------------------------------------------
     if win.Keybind then
         UIS.InputBegan:Connect(function(i, gp)
             if not gp and i.KeyCode == win.Keybind then
@@ -105,69 +97,24 @@ function Library:CreateWindow(cfg)
     end
 
     --------------------------------------------------
-    -- TAB BAR
-    --------------------------------------------------
-    local tabBar = Instance.new("Frame", frame)
-    tabBar.Position = UDim2.fromScale(0, 0.1)
-    tabBar.Size = UDim2.fromScale(1, 0.1)
-    tabBar.BackgroundTransparency = 1
+    function win:Destroy()
+        if self.Gui then
+            self.Gui:Destroy()
+        end
+    end
 
-    local tabsLayout = Instance.new("UIListLayout", tabBar)
-    tabsLayout.FillDirection = Enum.FillDirection.Horizontal
-    tabsLayout.Padding = UDim.new(0, 6)
-
-    win.TabBar = tabBar
-    win.Tabs = {}
-
-    --------------------------------------------------
-    -- CONTENT
-    --------------------------------------------------
-    local pages = Instance.new("Frame", frame)
-    pages.Position = UDim2.fromScale(0, 0.2)
-    pages.Size = UDim2.fromScale(1, 0.8)
-    pages.BackgroundTransparency = 1
-
-    win.Pages = pages
-
-    --------------------------------------------------
-    -- TAB METHOD
     --------------------------------------------------
     function win:CreateTab(name)
         local tab = {}
 
-        local btn = Instance.new("TextButton", tabBar)
-        btn.Size = UDim2.fromScale(0, 1)
-        btn.AutomaticSize = Enum.AutomaticSize.X
-        btn.Text = "  " .. name .. "  "
-        btn.Font = Enum.Font.GothamBold
-        btn.TextScaled = true
-        btn.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
-        btn.TextColor3 = Color3.new(1, 1, 1)
-        corner(btn, 8)
-
-        local page = Instance.new("Frame", pages)
-        page.Size = UDim2.fromScale(1, 1)
-        page.Visible = false
+        local page = Instance.new("Frame", frame)
+        page.Size = UDim2.fromScale(1, 0.9)
+        page.Position = UDim2.fromScale(0, 0.1)
         page.BackgroundTransparency = 1
 
         local layout = Instance.new("UIListLayout", page)
         layout.Padding = UDim.new(0, 6)
 
-        btn.MouseButton1Click:Connect(function()
-            for _, p in pairs(pages:GetChildren()) do
-                if p:IsA("Frame") then
-                    p.Visible = false
-                end
-            end
-            page.Visible = true
-        end)
-
-        if #pages:GetChildren() == 1 then
-            page.Visible = true
-        end
-
-        --------------------------------------------------
-        -- SECTION
         --------------------------------------------------
         function tab:CreateSection(titleText)
             local sec = {}
@@ -191,7 +138,6 @@ function Library:CreateWindow(cfg)
             lbl.TextScaled = true
             lbl.TextColor3 = Color3.new(1, 1, 1)
 
-            --------------------------------------------------
             function sec:CreateLabel(text)
                 local l = Instance.new("TextLabel", secFrame)
                 l.Size = UDim2.new(1, -8, 0, 26)
@@ -204,7 +150,6 @@ function Library:CreateWindow(cfg)
                 return l
             end
 
-            --------------------------------------------------
             function sec:CreateButton(text, callback)
                 local b = Instance.new("TextButton", secFrame)
                 b.Size = UDim2.new(1, -8, 0, 34)
@@ -219,23 +164,15 @@ function Library:CreateWindow(cfg)
                 return b
             end
 
-            --------------------------------------------------
             function sec:CreateDropdown(name, list, cb)
-                local d = {}
-                local current
-
                 local mainBtn = sec:CreateButton(name .. ": none", function() end)
 
                 for _, v in ipairs(list) do
-                    local opt = sec:CreateButton(" > " .. v, function()
-                        current = v
+                    sec:CreateButton(" > " .. v, function()
                         mainBtn.Text = name .. ": " .. v
                         cb(v)
                     end)
-                    opt.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
                 end
-
-                return d
             end
 
             return sec
