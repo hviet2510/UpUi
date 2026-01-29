@@ -1,5 +1,5 @@
 --------------------------------------------------
--- UpUi Loader | Auto Update Hub
+-- UpUi Loader | Auto Update Hub (FIXED)
 --------------------------------------------------
 
 local CURRENT_VERSION = "1.0.0"
@@ -9,7 +9,6 @@ local VERSION_URL =
 
 local OWNER = "hviet2510"
 local REPO = "UpUi"
-local BRANCH = "main"
 
 local HUB_NAME = "UpUi Hub"
 local SCRIPT_TIMEOUT = 6
@@ -58,10 +57,11 @@ local function checkUpdate()
         warn("[UpUi] Updating to", data.version)
 
         local code = game:HttpGet(data.loader)
-        local fn = loadstring(code, "UpUiUpdated")
-
-        fn()
-        return true
+        local fn, err = loadstring(code, "UpUiUpdated")
+        if fn then
+            fn()
+            return true
+        end
     end
 
     return false
@@ -72,19 +72,26 @@ if checkUpdate() then
 end
 
 --------------------------------------------------
--- LOAD UI LIBRARY
+-- LOAD UI LIBRARY (FIXED)
 --------------------------------------------------
 local UI_LIB =
     "https://raw.githubusercontent.com/hviet2510/UpUi/main/Library/Module.lua"
 
 local UILib
 do
-    local ok, res =
-        pcall(loadstring(game:HttpGet(UI_LIB), "UpUiUILib"))
-    if not ok then
-        return LP:Kick("Failed to load UI library")
+    local src = game:HttpGet(UI_LIB)
+    local fn, err = loadstring(src, "UpUiUILib")
+
+    if not fn then
+        return LP:Kick("Failed to compile UI library\n" .. tostring(err))
     end
-    UILib = res()
+
+    local ok, lib = pcall(fn)
+    if not ok then
+        return LP:Kick("Failed to run UI library\n" .. tostring(lib))
+    end
+
+    UILib = lib
 end
 
 --------------------------------------------------
