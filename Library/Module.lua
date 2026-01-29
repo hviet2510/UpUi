@@ -1,187 +1,195 @@
---// UpUi Simple UI Library (FINAL FIX)
+--------------------------------------------------
+-- MODERN HUB UI v2
+--------------------------------------------------
 
 local TweenService = game:GetService("TweenService")
-local UIS = game:GetService("UserInputService")
-
-local Library = {}
-Library.__index = Library
+local Lighting = game:GetService("Lighting")
+local CoreGui = game:GetService("CoreGui")
 
 --------------------------------------------------
-local function corner(obj, r)
-    local c = Instance.new("UICorner")
-    c.CornerRadius = UDim.new(0, r)
-    c.Parent = obj
-end
+-- BLUR
+--------------------------------------------------
+
+local blur = Instance.new("BlurEffect")
+blur.Name = "HubBlur"
+blur.Size = 0
+blur.Parent = Lighting
 
 --------------------------------------------------
-function Library:Notify(title, text)
-    local gui = self.Gui
+-- SCREEN GUI
+--------------------------------------------------
 
-    local frame = Instance.new("Frame", gui)
-    frame.Size = UDim2.fromScale(0.25, 0.1)
-    frame.Position = UDim2.fromScale(0.37, -0.2)
-    frame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
-    frame.BorderSizePixel = 0
-    corner(frame, 12)
+local Gui = Instance.new("ScreenGui")
+Gui.Name = "ModernHub"
+Gui.Parent = CoreGui
+Gui.ResetOnSpawn = false
+Gui.DisplayOrder = 100
 
-    local t1 = Instance.new("TextLabel", frame)
-    t1.Size = UDim2.fromScale(1, 0.45)
-    t1.BackgroundTransparency = 1
-    t1.Text = title
-    t1.Font = Enum.Font.GothamBold
-    t1.TextScaled = true
-    t1.TextColor3 = Color3.new(1, 1, 1)
+--------------------------------------------------
+-- SHADOW HOLDER
+--------------------------------------------------
 
-    local t2 = Instance.new("TextLabel", frame)
-    t2.Position = UDim2.fromScale(0, 0.45)
-    t2.Size = UDim2.fromScale(1, 0.55)
-    t2.BackgroundTransparency = 1
-    t2.TextWrapped = true
-    t2.Text = text
-    t2.Font = Enum.Font.Gotham
-    t2.TextScaled = true
-    t2.TextColor3 = Color3.fromRGB(200, 200, 200)
+local ShadowHolder = Instance.new("Frame", Gui)
+ShadowHolder.AnchorPoint = Vector2.new(.5,.5)
+ShadowHolder.Position = UDim2.fromScale(.5,.5)
+ShadowHolder.Size = UDim2.fromOffset(640,420)
+ShadowHolder.BackgroundTransparency = 1
 
-    frame.Parent = gui
+local Shadow = Instance.new("ImageLabel", ShadowHolder)
+Shadow.Size = UDim2.fromScale(1.08,1.1)
+Shadow.Position = UDim2.fromScale(-.04,-.05)
+Shadow.BackgroundTransparency = 1
+Shadow.Image = "rbxassetid://6015897843"
+Shadow.ImageTransparency = .35
+Shadow.ImageColor3 = Color3.new(0,0,0)
 
-    TweenService:Create(frame, TweenInfo.new(.4),
-        { Position = UDim2.fromScale(0.37, 0.05) }
+--------------------------------------------------
+-- MAIN PANEL
+--------------------------------------------------
+
+local Main = Instance.new("Frame", ShadowHolder)
+Main.AnchorPoint = Vector2.new(.5,.5)
+Main.Position = UDim2.fromScale(.5,.5)
+Main.Size = UDim2.fromScale(1,1)
+Main.BackgroundColor3 = Color3.fromRGB(10,10,10)
+Main.BackgroundTransparency = .25
+
+Instance.new("UICorner",Main).CornerRadius = UDim.new(0,12)
+
+local Stroke = Instance.new("UIStroke",Main)
+Stroke.Thickness = 2.5
+Stroke.Color = Color3.fromRGB(255,80,80)
+
+--------------------------------------------------
+-- HEADER
+--------------------------------------------------
+
+local Header = Instance.new("TextLabel",Main)
+Header.Size = UDim2.new(1,0,0,46)
+Header.BackgroundTransparency = 1
+Header.Text = "Modern Hub UI"
+Header.Font = Enum.Font.GothamBold
+Header.TextScaled = true
+Header.TextColor3 = Color3.new(1,1,1)
+
+local HeaderGrad = Instance.new("UIGradient",Header)
+HeaderGrad.Color = ColorSequence.new{
+    ColorSequenceKeypoint.new(0,Color3.fromRGB(255,80,80)),
+    ColorSequenceKeypoint.new(1,Color3.fromRGB(120,160,255))
+}
+
+--------------------------------------------------
+-- STATUS BAR
+--------------------------------------------------
+
+local StatusGui = Instance.new("ScreenGui",CoreGui)
+StatusGui.Name = "StatusBar"
+StatusGui.DisplayOrder = 90
+
+local StatusHolder = Instance.new("Frame",StatusGui)
+StatusHolder.AnchorPoint = Vector2.new(.5,0)
+StatusHolder.Position = UDim2.fromScale(.5,.02)
+StatusHolder.Size = UDim2.fromOffset(340,70)
+StatusHolder.BackgroundTransparency = 1
+
+local StatusShadow = Shadow:Clone()
+StatusShadow.Parent = StatusHolder
+StatusShadow.Size = UDim2.fromScale(1.1,1.2)
+
+local StatusMain = Instance.new("Frame",StatusHolder)
+StatusMain.AnchorPoint = Vector2.new(.5,.5)
+StatusMain.Position = UDim2.fromScale(.5,.5)
+StatusMain.Size = UDim2.fromScale(.9,.8)
+StatusMain.BackgroundColor3 = Color3.fromRGB(10,10,10)
+StatusMain.BackgroundTransparency = .25
+Instance.new("UICorner",StatusMain).CornerRadius = UDim.new(0,10)
+
+local StatusText = Instance.new("TextLabel",StatusMain)
+StatusText.Size = UDim2.fromScale(1,1)
+StatusText.BackgroundTransparency = 1
+StatusText.Text = "Status: Waiting..."
+StatusText.Font = Enum.Font.GothamBold
+StatusText.TextScaled = true
+StatusText.TextColor3 = Color3.fromRGB(255,80,80)
+
+--------------------------------------------------
+-- FLOATING TOGGLE
+--------------------------------------------------
+
+local ToggleGui = Instance.new("ScreenGui",CoreGui)
+ToggleGui.Name = "ToggleBtn"
+
+local ToggleFrame = Instance.new("Frame",ToggleGui)
+ToggleFrame.Size = UDim2.fromOffset(56,56)
+ToggleFrame.Position = UDim2.fromScale(.05,.25)
+ToggleFrame.BackgroundColor3 = Color3.fromRGB(20,20,20)
+ToggleFrame.Active = true
+ToggleFrame.Draggable = true
+Instance.new("UICorner",ToggleFrame).CornerRadius = UDim.new(1,0)
+
+local ToggleStroke = Instance.new("UIStroke",ToggleFrame)
+ToggleStroke.Color = Color3.fromRGB(255,80,80)
+ToggleStroke.Thickness = 2
+
+local ToggleIcon = Instance.new("ImageLabel",ToggleFrame)
+ToggleIcon.AnchorPoint = Vector2.new(.5,.5)
+ToggleIcon.Position = UDim2.fromScale(.5,.5)
+ToggleIcon.Size = UDim2.fromScale(.7,.7)
+ToggleIcon.BackgroundTransparency = 1
+ToggleIcon.Image = "rbxassetid://112485471724320"
+
+local ToggleBtn = Instance.new("TextButton",ToggleFrame)
+ToggleBtn.Size = UDim2.fromScale(1,1)
+ToggleBtn.BackgroundTransparency = 1
+ToggleBtn.Text = ""
+
+--------------------------------------------------
+-- TWEEN HELPERS
+--------------------------------------------------
+
+local function tween(obj,props,t)
+    TweenService:Create(
+        obj,
+        TweenInfo.new(t or .35,Enum.EasingStyle.Quint),
+        props
     ):Play()
-
-    task.delay(3, function()
-        TweenService:Create(frame, TweenInfo.new(.4),
-            { Position = UDim2.fromScale(0.37, -0.2) }
-        ):Play()
-        task.wait(.4)
-        frame:Destroy()
-    end)
 end
 
 --------------------------------------------------
-function Library:CreateWindow(cfg)
-    local win = setmetatable({}, self)
+-- TOGGLE LOGIC
+--------------------------------------------------
 
-    local gui = Instance.new("ScreenGui")
-    gui.Name = "UpUi"
-    gui.Parent = game.CoreGui
+local opened = true
 
-    win.Gui = gui
-    win.Keybind = cfg.Keybind
+ToggleBtn.MouseButton1Click:Connect(function()
 
-    local frame = Instance.new("Frame", gui)
-    frame.Size = UDim2.fromScale(0.32, 0.48)
-    frame.Position = UDim2.fromScale(0.34, 0.25)
-    frame.BackgroundColor3 = Color3.fromRGB(22, 22, 22)
-    frame.BorderSizePixel = 0
-    frame.Active = true
-    frame.Draggable = true
-    corner(frame, 16)
+    tween(ToggleIcon,{
+        Size = opened and UDim2.fromScale(.5,.5)
+            or UDim2.fromScale(.7,.7)
+    },.2)
 
-    win.Frame = frame
+    tween(Main,{
+        Size = opened and UDim2.fromScale(0,0)
+            or UDim2.fromScale(1,1)
+    },.35)
 
-    local title = Instance.new("TextLabel", frame)
-    title.Size = UDim2.fromScale(1, 0.1)
-    title.BackgroundTransparency = 1
-    title.Text = cfg.WindowName or "UpUi"
-    title.Font = Enum.Font.GothamBold
-    title.TextScaled = true
-    title.TextColor3 = Color3.new(1, 1, 1)
+    tween(blur,{
+        Size = opened and 0 or 20
+    },.35)
 
-    --------------------------------------------------
-    if win.Keybind then
-        UIS.InputBegan:Connect(function(i, gp)
-            if not gp and i.KeyCode == win.Keybind then
-                frame.Visible = not frame.Visible
-            end
-        end)
-    end
+    Gui.Enabled = not opened
 
-    --------------------------------------------------
-    function win:Destroy()
-        if self.Gui then
-            self.Gui:Destroy()
-        end
-    end
+    opened = not opened
+end)
 
-    --------------------------------------------------
-    function win:CreateTab(name)
-        local tab = {}
+ToggleBtn.MouseEnter:Connect(function()
+    tween(ToggleFrame,{
+        BackgroundColor3 = Color3.fromRGB(40,40,40)
+    },.15)
+end)
 
-        local page = Instance.new("Frame", frame)
-        page.Size = UDim2.fromScale(1, 0.9)
-        page.Position = UDim2.fromScale(0, 0.1)
-        page.BackgroundTransparency = 1
-
-        local layout = Instance.new("UIListLayout", page)
-        layout.Padding = UDim.new(0, 6)
-
-        --------------------------------------------------
-        function tab:CreateSection(titleText)
-            local sec = {}
-
-            local secFrame = Instance.new("Frame", page)
-            secFrame.Size = UDim2.new(1, -12, 0, 40)
-            secFrame.AutomaticSize = Enum.AutomaticSize.Y
-            secFrame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
-            secFrame.BorderSizePixel = 0
-            corner(secFrame, 12)
-
-            local secLayout = Instance.new("UIListLayout", secFrame)
-            secLayout.Padding = UDim.new(0, 6)
-
-            local lbl = Instance.new("TextLabel", secFrame)
-            lbl.Size = UDim2.fromScale(1, 0)
-            lbl.AutomaticSize = Enum.AutomaticSize.Y
-            lbl.BackgroundTransparency = 1
-            lbl.Text = titleText
-            lbl.Font = Enum.Font.GothamBold
-            lbl.TextScaled = true
-            lbl.TextColor3 = Color3.new(1, 1, 1)
-
-            function sec:CreateLabel(text)
-                local l = Instance.new("TextLabel", secFrame)
-                l.Size = UDim2.new(1, -8, 0, 26)
-                l.BackgroundTransparency = 1
-                l.Text = text
-                l.TextWrapped = true
-                l.Font = Enum.Font.Gotham
-                l.TextScaled = true
-                l.TextColor3 = Color3.fromRGB(200, 200, 200)
-                return l
-            end
-
-            function sec:CreateButton(text, callback)
-                local b = Instance.new("TextButton", secFrame)
-                b.Size = UDim2.new(1, -8, 0, 34)
-                b.Text = text
-                b.Font = Enum.Font.GothamBold
-                b.TextScaled = true
-                b.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
-                b.TextColor3 = Color3.new(1, 1, 1)
-                corner(b, 10)
-
-                b.MouseButton1Click:Connect(callback)
-                return b
-            end
-
-            function sec:CreateDropdown(name, list, cb)
-                local mainBtn = sec:CreateButton(name .. ": none", function() end)
-
-                for _, v in ipairs(list) do
-                    sec:CreateButton(" > " .. v, function()
-                        mainBtn.Text = name .. ": " .. v
-                        cb(v)
-                    end)
-                end
-            end
-
-            return sec
-        end
-
-        return tab
-    end
-
-    return win
-end
-
-return setmetatable({}, Library)
+ToggleBtn.MouseLeave:Connect(function()
+    tween(ToggleFrame,{
+        BackgroundColor3 = Color3.fromRGB(20,20,20)
+    },.15)
+end)
